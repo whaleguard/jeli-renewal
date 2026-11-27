@@ -149,7 +149,7 @@ $('closeDialog').onclick=()=>$('dialog').close();
 $('dialog').addEventListener('click',event=>{if(event.target===$('dialog')) $('dialog').close()});
 const path=(r='',lang=en)=>'/'+(lang?'en/':'')+(r?r.replace(/^\/|\/$/g,'')+'/':'');
 const hash=(r)=>'#'+path(r);
-const link=(r,t,c='')=>'<a class="'+c+'" data-route="'+e(r)+'" href="'+e(location.protocol==='file:'?hash(r):path(r))+'">'+t+'</a>';
+const link=(r,t,c='')=>'<a class="'+c+'" data-route="'+e(r)+'" href="'+e(true?hash(r):path(r))+'">'+t+'</a>';
 const btn=(r,t,c='')=>link(r,t,'btn '+c);
 const ext=(u,t,c='')=>'<a class="'+c+'" href="'+e(u)+'" target="_blank" rel="noopener">'+t+'</a>';
 const dial=()=>e(db.info.phoneEn.replace(/[^+0-9]/g,''));
@@ -448,12 +448,12 @@ function openFlow(r){
  }
 }
 function go(r='',lang=en,write=true){
- route=r;en=lang;if(write){try{history.pushState({},'',location.protocol==='file:'?'#'+path(r,lang):path(r,lang))}catch{location.hash=path(r,lang)}}
+ route=r;en=lang;if(write){try{history.pushState({},'',true?'#'+path(r,lang):path(r,lang))}catch{location.hash=path(r,lang)}}
  if($('dialog').open)$('dialog').close();
  if(r.startsWith('admin')){clearInterval(heroTimer);showAdmin();}else {if(!r)db.visits=(db.visits||0)+1;showPublic(r)}
  metadata(r);window.scrollTo(0,0);
 }
-function current(){const value=decodeURI(location.hash.startsWith('#/')?location.hash.slice(1):location.protocol==='file:'?'/':location.pathname);const lang=value.startsWith('/en/');let r=value.replace(/^\/(?:en\/)?|\/$/g,'');if(r&&!r.includes('/')&&!publicRoutes[r]&&!['admin','review','push','director'].includes(r)&&archive[r])r='original/'+r;return [r,lang]}
+function current(){const value=decodeURI(location.hash.startsWith('#/')?location.hash.slice(1):true?'/':location.pathname);const lang=value.startsWith('/en/');let r=value.replace(/^\/(?:en\/)?|\/$/g,'');if(r&&!r.includes('/')&&!publicRoutes[r]&&!['admin','review','push','director'].includes(r)&&archive[r])r='original/'+r;return [r,lang]}
 window.addEventListener('popstate',()=>go(...current(),false));
 document.addEventListener('click',ev=>{
  const a=ev.target.closest('a[data-route]');if(a&&ev.button===0&&!ev.metaKey&&!ev.ctrlKey&&!ev.shiftKey&&!ev.altKey){ev.preventDefault();go(a.dataset.route);return}
